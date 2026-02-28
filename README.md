@@ -19,6 +19,9 @@
   - 문항 JSON/CSV 가져오기
   - **전체 백업 JSON 내보내기 (학습내용/복습빈도/오답노트/설정/사용자문항 전체)**
   - **전체 백업 JSON 복원**
+  - JSON/CSV 파일 가져오기
+  - 진도+커스텀 문항 백업 JSON 내보내기
+- 통계/설정 화면
 
 ## 실행 방법
 ```bash
@@ -69,6 +72,13 @@ npm run preview
 id,subject,system,topic,difficulty,tags,stem,choiceA,choiceB,choiceC,choiceD,answer,explanation
 ```
 - `tags`는 `|`로 구분 (`심장|약리`)
+
+## 백업
+문항 관리 > "백업 내보내기" 버튼으로 다음을 단일 JSON 파일로 저장:
+- settings
+- progress
+- customQuestions
+- daily
 
 ## 테스트
 ```bash

@@ -29,7 +29,7 @@ export const db = {
   async getSettings(): Promise<Settings> {
     const d = await openDb();
     const item = await reqToPromise<any>(d.transaction('settings').objectStore('settings').get('settings'));
-    return item?.value || { dailySize: 10, wrongFirst: false, dueFirst: true };
+    return item?.value || { dailySize: 10, wrongFirst: false, dueFirst: true, selectedSetIds: [] };
   },
   async putSettings(value: Settings) { const d = await openDb(); const tx = d.transaction('settings', 'readwrite'); tx.objectStore('settings').put({ id: 'settings', value }); await txDone(tx); },
   async getCustomQuestions() { const d = await openDb(); return reqToPromise<Question[]>(d.transaction('customQuestions').objectStore('customQuestions').getAll()); },

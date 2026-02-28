@@ -9,7 +9,7 @@ type Route = 'home'|'daily'|'review'|'manager'|'stats'|'settings';
 const app = document.getElementById('app')!;
 let questions: Question[] = [];
 let progressMap = new Map<string, Progress>();
-let settings: Settings = { dailySize: 10, wrongFirst: false, dueFirst: true };
+let settings: Settings = { dailySize: 10, wrongFirst: false, dueFirst: true, selectedSetIds: [] };
 
 const load = async () => {
   const bundled = await (await fetch('/public/data/questions.sample.json')).json();
@@ -49,7 +49,7 @@ const renderHome = async () => {
 };
 
 const renderQuiz = async (mode:'daily'|'review') => {
-  const queue = mode === 'daily' ? buildDailyQuiz(questions, progressMap, settings.dailySize).map((x)=>x.question) : getDue(questions, progressMap);
+  const queue = mode === 'daily' ? buildDailyQuiz(questions, progressMap, settings.dailySize, settings.selectedSetIds).map((x)=>x.question) : getDue(questions, progressMap);
   let i = 0, correct = 0; const wrong: string[] = [];
   const show = () => {
     if (i >= queue.length) {

@@ -1,5 +1,6 @@
 import { todayStr } from './date.js';
-import type { DailyStats, FullBackup, Progress, Question, Settings, StudyLog, WrongNote } from './types.js';
+import { normalizeSettings } from './settings.js';
+import type { DailyStats, Progress, Question, Settings } from './types.js';
 
 const DB_NAME = 'meddaily';
 const VERSION = 2;
@@ -31,9 +32,14 @@ export const db = {
   async getSettings(): Promise<Settings> {
     const d = await openDb();
     const item = await reqToPromise<any>(d.transaction('settings').objectStore('settings').get('settings'));
-    return item?.value || { dailySize: 10, wrongFirst: false, dueFirst: true };
+    return normalizeSettings(item?.value);
   },
-  async putSettings(value: Settings) { const d = await openDb(); const tx = d.transaction('settings', 'readwrite'); tx.objectStore('settings').put({ id: 'settings', value }); await txDone(tx); },
+  async putSettings(value: Settings) {
+    const d = await openDb();
+    const tx = d.transaction('settings', 'readwrite');
+    tx.objectStore('settings').put({ id: 'settings', value: normalizeSettings(value) });
+    await txDone(tx);
+  },
   async getCustomQuestions() { const d = await openDb(); return reqToPromise<Question[]>(d.transaction('customQuestions').objectStore('customQuestions').getAll()); },
   async putCustomQuestions(questions: Question[]) { const d = await openDb(); const tx = d.transaction('customQuestions', 'readwrite'); questions.forEach((q) => tx.objectStore('customQuestions').put(q)); await txDone(tx); },
   async getDaily(date = todayStr()): Promise<DailyStats> { const d = await openDb(); return (await reqToPromise<any>(d.transaction('daily').objectStore('daily').get(date))) || { date, solved: 0, correct: 0 }; },

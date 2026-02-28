@@ -3,14 +3,14 @@ import { dedupe, parseBackup, parseImportQuestions } from './core/io.js';
 import { buildDailyQuiz, getDue } from './core/selection.js';
 import { defaultProgress, updateProgress } from './core/scheduler.js';
 import { todayStr } from './core/date.js';
-import { bundledQuestions } from './data/questions.sample.js';
+import { defaultSettings } from './core/settings.js';
 import type { Progress, Question, Settings } from './core/types.js';
 
 type Route = 'home' | 'daily' | 'review' | 'manager' | 'stats' | 'settings';
 const app = document.getElementById('app')!;
 let questions: Question[] = [];
 let progressMap = new Map<string, Progress>();
-let settings: Settings = { dailySize: 10, wrongFirst: false, dueFirst: true };
+let settings: Settings = defaultSettings();
 
 const load = async () => {
   const custom = await db.getCustomQuestions();

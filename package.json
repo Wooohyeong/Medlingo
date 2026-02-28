@@ -1,0 +1,14 @@
+{
+  "name": "meddaily",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npm run build:ts && node scripts/dev-server.mjs --root . --port 5173",
+    "build:ts": "tsc -p tsconfig.json",
+    "build": "npm run clean && npm run build:ts && node scripts/build.mjs",
+    "preview": "node scripts/dev-server.mjs --root dist --port 4173",
+    "test": "npm run build:ts && node --test tests/*.test.mjs",
+    "clean": "node scripts/clean.mjs"
+  }
+}

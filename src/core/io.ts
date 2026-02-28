@@ -1,4 +1,5 @@
-import type { Question } from './types.js';
+import { normalizeSettings } from './settings.js';
+import type { DailyStats, Progress, Question, Settings } from './types.js';
 
 const norm = (q: Question): Question => ({ ...q, createdBy: 'custom' });
 
@@ -33,3 +34,24 @@ export const dedupe = (incoming: Question[], existingIds: Set<string>) => incomi
   existingIds.add(id);
   return { ...q, id };
 });
+
+export type BackupData = {
+  exportedAt?: string;
+  settings: Settings;
+  progress: Progress[];
+  customQuestions: Question[];
+  daily: DailyStats[];
+};
+
+export const parseBackup = (text: string): BackupData => {
+  const parsed = JSON.parse(text) as Partial<BackupData>;
+  if (!parsed || typeof parsed !== 'object') throw new Error('백업 형식이 올바르지 않습니다.');
+
+  return {
+    exportedAt: typeof parsed.exportedAt === 'string' ? parsed.exportedAt : undefined,
+    settings: normalizeSettings(parsed.settings),
+    progress: Array.isArray(parsed.progress) ? parsed.progress : [],
+    customQuestions: Array.isArray(parsed.customQuestions) ? parsed.customQuestions.map(norm) : [],
+    daily: Array.isArray(parsed.daily) ? parsed.daily : []
+  };
+};

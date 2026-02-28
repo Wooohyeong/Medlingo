@@ -3,7 +3,7 @@ import type { DailyStats, Progress, Question, Settings } from './types.js';
 
 const norm = (q: Question): Question => ({ ...q, createdBy: 'custom' });
 
-export const parseImport = (name: string, text: string): Question[] => {
+export const parseImportQuestions = (name: string, text: string): Question[] => {
   if (name.endsWith('.json')) {
     const parsed = JSON.parse(text);
     const questions = Array.isArray(parsed) ? parsed : parsed.questions;
@@ -21,11 +21,20 @@ export const parseImport = (name: string, text: string): Question[] => {
         type: 'single', subject: c[idx('subject')] || '기타', system: c[idx('system')] || '일반', topic: c[idx('topic')] || '기본',
         difficulty: Number(c[idx('difficulty')] || 1), tags: (c[idx('tags')] || '').split('|').filter(Boolean), stem: c[idx('stem')] || '',
         choices: ['A', 'B', 'C', 'D'].map((k) => ({ key: k, text: c[idx(`choice${k}`)] || '' })).filter((x) => x.text),
-        answer: c[idx('answer')] || 'A', explanation: c[idx('explanation')] || '', createdBy: 'custom', createdAt: new Date().toISOString().slice(0,10)
+        answer: c[idx('answer')] || 'A', explanation: c[idx('explanation')] || '', createdBy: 'custom', createdAt: new Date().toISOString().slice(0, 10)
       });
     });
   }
   throw new Error('JSON 또는 CSV 파일만 가져올 수 있습니다.');
+};
+
+export const parseBackup = (text: string): FullBackup => {
+  const data = JSON.parse(text);
+  if (data?.schemaVersion !== '1.0') throw new Error('지원하지 않는 백업 버전입니다.');
+  for (const key of ['settings', 'progress', 'customQuestions', 'daily', 'studyLogs', 'wrongNotes']) {
+    if (!(key in data)) throw new Error(`백업 파일에 ${key}가 없습니다.`);
+  }
+  return data as FullBackup;
 };
 
 export const dedupe = (incoming: Question[], existingIds: Set<string>) => incoming.map((q) => {

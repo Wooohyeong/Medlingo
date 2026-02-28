@@ -17,3 +17,7 @@ export type Settings = {
 };
 export type DailyStats = { date: string; solved: number; correct: number };
 export type QuizItem = { question: Question; progress?: Progress };
+export type FullBackup = {
+  schemaVersion: '1.0'; exportedAt: string; settings: Settings; progress: Progress[];
+  customQuestions: Question[]; daily: DailyStats[]; studyLogs: StudyLog[]; wrongNotes: WrongNote[];
+};

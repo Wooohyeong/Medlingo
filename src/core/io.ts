@@ -1,14 +1,35 @@
 import { normalizeSettings } from './settings.js';
 import type { DailyStats, Progress, Question, Settings } from './types.js';
 
-const norm = (q: Question): Question => ({ ...q, createdBy: 'custom' });
+const DEFAULT_GRADE: Question['grade'] = 1;
+const DEFAULT_SET_ID = 'custom';
+const DEFAULT_SET_NAME = '사용자 세트';
+
+const toGrade = (value: unknown): Question['grade'] => {
+  const n = Number(value);
+  return n === 1 || n === 2 || n === 3 || n === 4 ? n : DEFAULT_GRADE;
+};
+
+const norm = (q: Question): Question => ({
+  ...q,
+  grade: toGrade(q.grade),
+  setId: q.setId || DEFAULT_SET_ID,
+  setName: q.setName || DEFAULT_SET_NAME,
+  createdBy: 'custom',
+  createdAt: q.createdAt || new Date().toISOString().slice(0, 10)
+});
 
 export const parseImportQuestions = (name: string, text: string): Question[] => {
   if (name.endsWith('.json')) {
     const parsed = JSON.parse(text);
     const questions = Array.isArray(parsed) ? parsed : parsed.questions;
     if (!Array.isArray(questions)) throw new Error('JSON 형식이 올바르지 않습니다.');
-    return questions.map(norm);
+    return questions.map((q) => norm({
+      ...q,
+      grade: toGrade(q.grade),
+      setId: q.setId || DEFAULT_SET_ID,
+      setName: q.setName || DEFAULT_SET_NAME
+    } as Question));
   }
   if (name.endsWith('.csv')) {
     const [header, ...rows] = text.trim().split(/\r?\n/);
@@ -19,7 +40,11 @@ export const parseImportQuestions = (name: string, text: string): Question[] => 
       return norm({
         id: c[idx('id')] || `custom-${Date.now()}-${i}`,
         type: 'single', subject: c[idx('subject')] || '기타', system: c[idx('system')] || '일반', topic: c[idx('topic')] || '기본',
-        difficulty: Number(c[idx('difficulty')] || 1), tags: (c[idx('tags')] || '').split('|').filter(Boolean), stem: c[idx('stem')] || '',
+        difficulty: Number(c[idx('difficulty')] || 1),
+        grade: toGrade(c[idx('grade')]),
+        setId: c[idx('setId')] || DEFAULT_SET_ID,
+        setName: c[idx('setName')] || DEFAULT_SET_NAME,
+        tags: (c[idx('tags')] || '').split('|').filter(Boolean), stem: c[idx('stem')] || '',
         choices: ['A', 'B', 'C', 'D'].map((k) => ({ key: k, text: c[idx(`choice${k}`)] || '' })).filter((x) => x.text),
         answer: c[idx('answer')] || 'A', explanation: c[idx('explanation')] || '', createdBy: 'custom', createdAt: new Date().toISOString().slice(0, 10)
       });

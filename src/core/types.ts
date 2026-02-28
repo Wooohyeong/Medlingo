@@ -1,6 +1,7 @@
 export type Choice = { key: string; text: string };
 export type Question = {
   id: string; type: 'single'; subject: string; system: string; topic: string; difficulty: number;
+  grade: 1 | 2 | 3 | 4; setId: string; setName: string;
   tags: string[]; stem: string; choices: Choice[]; answer: string; explanation: string;
   createdBy: 'bundled' | 'custom'; createdAt: string;
 };

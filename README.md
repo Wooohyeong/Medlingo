@@ -69,7 +69,7 @@ npm run preview
 ### CSV
 헤더 예시:
 ```csv
-id,subject,system,topic,difficulty,tags,stem,choiceA,choiceB,choiceC,choiceD,answer,explanation
+id,subject,system,topic,difficulty,grade,setId,setName,tags,stem,choiceA,choiceB,choiceC,choiceD,answer,explanation
 ```
 - `tags`는 `|`로 구분 (`심장|약리`)
 

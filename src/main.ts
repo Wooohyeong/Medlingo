@@ -5,6 +5,7 @@ import { defaultProgress, updateProgress } from './core/scheduler.js';
 import { todayStr } from './core/date.js';
 import { defaultSettings } from './core/settings.js';
 import type { Progress, Question, Settings } from './core/types.js';
+import { sampleQuestions as bundledQuestions } from './data/questions.sample.js';
 
 type Route = 'home' | 'daily' | 'review' | 'manager' | 'stats' | 'settings';
 const app = document.getElementById('app')!;

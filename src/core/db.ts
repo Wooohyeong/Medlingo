@@ -1,6 +1,6 @@
 import { todayStr } from './date.js';
 import { normalizeSettings } from './settings.js';
-import type { DailyStats, Progress, Question, Settings } from './types.js';
+import type { DailyStats, FullBackup, Progress, Question, Settings, StudyLog, WrongNote } from './types.js';
 
 const DB_NAME = 'meddaily';
 const VERSION = 2;
